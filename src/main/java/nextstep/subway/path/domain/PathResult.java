@@ -8,7 +8,6 @@ import java.util.List;
 
 public class PathResult {
 
-
     private Sections sections;
     private Stations stations;
 
