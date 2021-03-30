@@ -1,15 +1,14 @@
 package nextstep.subway.line.domain;
 
+import nextstep.subway.auth.infrastructure.SecurityContextHolder;
 import nextstep.subway.station.domain.Station;
+import org.springframework.util.ObjectUtils;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Embeddable
 public class Sections {
@@ -17,12 +16,12 @@ public class Sections {
     private static final int ADDITIONAL_FARE_PER_DISTANCE = 100;
     private static final int MAX_UNTIL_FIFTY = 800;
 
-    private static final int DISTANCE_TEN = 10;
-    private static final int DISTANCE_FIFTY = 50;
+    private static final int TEN = 10;
+    private static final int FIFTY = 50;
 
     private static final int ONE = 1;
-    private static final int PER_EIGHT = 8;
-    private static final int PER_FIVE = 5;
+    private static final int EIGHT = 8;
+    private static final int FIVE = 5;
     private static final int ELEVEN = 11;
     private static final int FIFTY_ONE = 51;
 
@@ -157,17 +156,17 @@ public class Sections {
     public int getTotalFare(int distance) {
         int fareByDistance = BASE_FARE;
 
-        if(distance <= DISTANCE_TEN) {
+        if(distance <= TEN) {
             return fareByDistance;
         }
 
-        if(distance > DISTANCE_FIFTY) {
-            fareByDistance += MAX_UNTIL_FIFTY + (int) ((Math.ceil((distance - FIFTY_ONE) / PER_EIGHT) + ONE) * ADDITIONAL_FARE_PER_DISTANCE);
-            return addLineFare(fareByDistance);
+        if(distance > FIFTY) {
+            fareByDistance += MAX_UNTIL_FIFTY + (int) ((Math.ceil((distance - FIFTY_ONE) / EIGHT) + ONE) * ADDITIONAL_FARE_PER_DISTANCE);
+            return discountByAge(addLineFare(fareByDistance));
         }
 
-        fareByDistance += (int) ((Math.ceil((distance - ELEVEN) / PER_FIVE) + ONE) * ADDITIONAL_FARE_PER_DISTANCE);
-        return addLineFare(fareByDistance);
+        fareByDistance += (int) ((Math.ceil((distance - ELEVEN) / FIVE) + ONE) * ADDITIONAL_FARE_PER_DISTANCE);
+        return discountByAge(addLineFare(fareByDistance));
     }
 
     private int addLineFare(int fare) {
@@ -179,4 +178,28 @@ public class Sections {
 
         return fare + additionalLineFare;
     }
+
+    private int discountByAge(int fare) {
+        int userAge = getUserAge();
+
+        if(6 <= userAge && userAge < 13) {
+            return (( fare - 350 ) * FIVE / TEN);
+        }
+
+        if(13 <= userAge && userAge < 20) {
+            return (( fare - 350) * EIGHT / TEN);
+        }
+
+        return fare;
+    }
+
+    private int getUserAge() {
+        if(!ObjectUtils.isEmpty(SecurityContextHolder.getContext().getAuthentication())) {
+            Map<String, String> principal = (Map) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return Integer.parseInt(principal.get("age"));
+        }
+        return -1;
+    }
+
+
 }

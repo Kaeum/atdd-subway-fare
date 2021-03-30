@@ -6,7 +6,6 @@ import io.restassured.response.Response;
 import nextstep.subway.AcceptanceTest;
 import nextstep.subway.auth.dto.TokenResponse;
 import nextstep.subway.line.dto.LineResponse;
-import nextstep.subway.member.domain.Member;
 import nextstep.subway.station.dto.StationResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -71,7 +70,7 @@ public class TempPathAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response = 두_역의_최단_거리_경로_조회를_요청(어린이, 양재역.getId(), 교대역.getId());
 
         // then
-        경로_응답됨(response, Lists.newArrayList(양재역.getId(), 강남역.getId(), 교대역.getId()), 58, 20, 900);
+        경로_응답됨(response, Lists.newArrayList(양재역.getId(), 강남역.getId(), 교대역.getId()), 58, 20, 1150);
     }
 
     @DisplayName("청소년으로 로그인한 상태에서 두 역의 최단 거리 경로를 조회한다.")
@@ -81,7 +80,7 @@ public class TempPathAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response = 두_역의_최단_거리_경로_조회를_요청(청소년, 양재역.getId(), 교대역.getId());
 
         // then
-        경로_응답됨(response, Lists.newArrayList(양재역.getId(), 강남역.getId(), 교대역.getId()), 58, 20, 1440);
+        경로_응답됨(response, Lists.newArrayList(양재역.getId(), 강남역.getId(), 교대역.getId()), 58, 20, 1840);
     }
 
     @DisplayName("두 역의 최소 시간 경로를 조회한다.")
@@ -101,7 +100,7 @@ public class TempPathAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response = 두_역의_최소_소요_시간_경로_조회를_요청(어린이, 양재역.getId(), 교대역.getId());
 
         // then
-        경로_응답됨(response, Lists.newArrayList(양재역.getId(), 남부터미널역.getId(), 교대역.getId()), 60, 18, 1520);
+        경로_응답됨(response, Lists.newArrayList(양재역.getId(), 남부터미널역.getId(), 교대역.getId()), 60, 18, 950);
     }
 
     @DisplayName("두 역의 최소 시간 경로를 조회한다.")
@@ -111,6 +110,6 @@ public class TempPathAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response = 두_역의_최소_소요_시간_경로_조회를_요청(청소년, 양재역.getId(), 교대역.getId());
 
         // then
-        경로_응답됨(response, Lists.newArrayList(양재역.getId(), 남부터미널역.getId(), 교대역.getId()), 60, 18, 950);
+        경로_응답됨(response, Lists.newArrayList(양재역.getId(), 남부터미널역.getId(), 교대역.getId()), 60, 18, 1520);
     }
 }
