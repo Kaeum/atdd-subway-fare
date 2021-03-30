@@ -61,7 +61,7 @@ public class TempPathAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response = 두_역의_최단_거리_경로_조회를_요청(양재역.getId(), 교대역.getId());
 
         // then
-        경로_응답됨(response, Lists.newArrayList(양재역.getId(), 강남역.getId(), 교대역.getId()), 58, 20, 2150);
+        경로_응답됨(response, Lists.newArrayList(양재역.getId(), 강남역.getId(), 교대역.getId()), 58, 20, 2650);
     }
 
     @DisplayName("어린이로 로그인한 상태에서 두 역의 최단 거리 경로를 조회한다.")

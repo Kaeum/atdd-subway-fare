@@ -14,17 +14,17 @@ import java.util.Optional;
 @Embeddable
 public class Sections {
     private static final int BASE_FARE = 1250;
-    public static final int ADDITIONAL_FARE_PER_DISTANCE = 100;
-
-    public static final int DISTANCE_TEN = 10;
-    public static final int DISTANCE_FIFTY = 50;
-
-    public static final int ONE = 1;
-    public static final int PER_EIGHT = 8;
-    public static final int PER_FIVE = 5;
-    private static final int ELEVEN = 11;
+    private static final int ADDITIONAL_FARE_PER_DISTANCE = 100;
     private static final int MAX_UNTIL_FIFTY = 800;
-    public static final int FIFTY_ONE = 51;
+
+    private static final int DISTANCE_TEN = 10;
+    private static final int DISTANCE_FIFTY = 50;
+
+    private static final int ONE = 1;
+    private static final int PER_EIGHT = 8;
+    private static final int PER_FIVE = 5;
+    private static final int ELEVEN = 11;
+    private static final int FIFTY_ONE = 51;
 
     @OneToMany(mappedBy = "line", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Section> sections = new ArrayList<>();
@@ -155,18 +155,28 @@ public class Sections {
     }
 
     public int getTotalFare(int distance) {
-        int totalFare = BASE_FARE;
+        int fareByDistance = BASE_FARE;
 
         if(distance <= DISTANCE_TEN) {
-            return totalFare;
+            return fareByDistance;
         }
 
         if(distance > DISTANCE_FIFTY) {
-            totalFare += MAX_UNTIL_FIFTY + (int) ((Math.ceil((distance - FIFTY_ONE) / PER_EIGHT) + ONE) * ADDITIONAL_FARE_PER_DISTANCE);
-            return totalFare;
+            fareByDistance += MAX_UNTIL_FIFTY + (int) ((Math.ceil((distance - FIFTY_ONE) / PER_EIGHT) + ONE) * ADDITIONAL_FARE_PER_DISTANCE);
+            return addLineFare(fareByDistance);
         }
 
-        totalFare += (int) ((Math.ceil((distance - ELEVEN) / PER_FIVE) + ONE) * ADDITIONAL_FARE_PER_DISTANCE);
-        return totalFare;
+        fareByDistance += (int) ((Math.ceil((distance - ELEVEN) / PER_FIVE) + ONE) * ADDITIONAL_FARE_PER_DISTANCE);
+        return addLineFare(fareByDistance);
+    }
+
+    private int addLineFare(int fare) {
+        int additionalLineFare = sections.stream()
+                .map(Section::getLine)
+                .mapToInt(Line::getAdditionalLineFare)
+                .max()
+                .orElse(0);
+
+        return fare + additionalLineFare;
     }
 }
